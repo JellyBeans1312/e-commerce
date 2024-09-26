@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+body :root {
   font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
 }
 
 @layer utilities {
