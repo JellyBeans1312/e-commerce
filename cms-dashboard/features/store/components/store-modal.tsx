@@ -5,6 +5,7 @@ import { Form } from "@/components/ui/form";
 
 import { StoreForm } from "@/features/store/components/store-form";
 import { useStoreModal } from "@/features/store/hooks/use-store-modal";
+import { useCreateStore } from "@/features/store/api/use-create-store";
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from "react-hook-form";
@@ -19,20 +20,17 @@ type FormValues = z.input<typeof formSchema>
 export const StoreModal = () => {
     const {isOpen, onClose} = useStoreModal();
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: '',
-        }
-    });
+    const createStore = useCreateStore();
+
 
     const onSubmit = async (values: FormValues) => {
-        console.log(values)
+        createStore.mutate(values, {
+            onSuccess: () => {
+                onClose();
+            }
+        })
     }
-    
-    const onCancel = () => {
-        onClose();
-    }
+
     const defaultValues = {
         name: ''
     }
@@ -47,9 +45,8 @@ export const StoreModal = () => {
                 <div className="space-y-4 py-2 pb-4">
                     <StoreForm 
                         onSubmit={onSubmit}
-                        disabled={false}
+                        disabled={createStore.isPending}
                         defaultValues={defaultValues}
-                        onCancel={onCancel}
                     />
                 </div>
             </div>
